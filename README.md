@@ -9,6 +9,8 @@ Custom Odoo 19 modules built during my internship. Two installable addons:
 
 Both target **Odoo 19.0** and use the Odoo 19 ORM idioms (`models.Constraint`, `@api.model_create_multi`, computed+searchable fields).
 
+![The Books list view, showing titles with authors, tags, computed availability and copy counts](docs/images/library-books-list.png)
+
 ---
 
 ## Quick start
@@ -104,6 +106,10 @@ The interesting part. A member reserves a book that has no free copies; the syst
 
 FIFO ordering resolves the two-holds-racing-for-one-copy case: exactly the oldest waiting reservation gets each freed copy.
 
+A reservation that has been auto-assigned a freed copy, filtered by the *Ready for Pickup* state — `Hold Expires On` was stamped by `_assign_copy`, and the daily cron will release the copy if nobody collects it by then:
+
+![Reservations list filtered to Ready for Pickup, showing a hold with its expiry timestamp](docs/images/reservations-ready.png)
+
 ### Automated due-date reminders
 
 A daily `ir.cron` (`ir_cron_send_loan_due_reminders`, running as `base.user_root`) calls `library.book.loan._cron_send_due_date_reminders()`, which emails borrowers whose `ongoing` loan is due tomorrow using the `mail_template_loan_due_reminder` template.
@@ -117,6 +123,10 @@ Three non-obvious bugs came out of building this, each fixed in the code:
 ### Searchable computed fields
 
 `library.book.loan.is_overdue` is computed and non-stored, with a custom `_search_is_overdue` so it still works in filters and domains. The gotcha: Odoo 19 normalizes `('field', '=', True)` into an `in` domain before calling a custom `search=` method, passing an `OrderedSet` as the value. Handling only `=` / `!=` silently inverts the filter for the most common case, so the method handles `in` / `not in` too.
+
+The result — the **Overdue** filter working against a non-stored computed field, with overdue rows highlighted via `decoration-danger="is_overdue"` on the list view:
+
+![Loans list with the Overdue filter applied, overdue rows rendered in red](docs/images/loans-overdue.png)
 
 ---
 
@@ -137,6 +147,10 @@ Extends `res.partner` (`application: False` — it's an extension, not an app).
 
 The module also inherits `base.view_res_partner_filter` to add a **VIP** filter and a **Group By → VIP** option to the Contacts search panel.
 
+A contact whose bio mentions "VIP" — `VIP Member` was set automatically by the rule, and `Bio Character Count` is the stored computed length:
+
+![Contact form showing Instructor Bio, a computed Bio Character Count of 870, and the VIP Member box automatically ticked](docs/images/partner-vip.png)
+
 ---
 
 ## Repository layout
@@ -153,6 +167,7 @@ Odoo19-Internship/
 │   ├── __manifest__.py
 │   ├── models/          # res_partner.py
 │   └── views/           # form + search view inherits
+├── docs/images/         # UI screenshots used in this README
 ├── docker-compose.yml   # Odoo 19 + PostgreSQL, this repo mounted as an addon
 ├── requirements.txt
 └── README.md
