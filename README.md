@@ -18,8 +18,8 @@ These modules are addons — they need an Odoo 19 installation to run.
 ### Option A: Docker (fastest)
 
 ```bash
-git clone https://github.com/ammarIbrahim59/odoo19-internship.git
-cd odoo19-internship
+git clone https://github.com/ammarIbrahim59/Odoo19-Internship.git
+cd Odoo19-Internship
 docker compose up
 ```
 
@@ -32,16 +32,16 @@ Open <http://localhost:8069>, create a database, then install **Library Manageme
 git clone https://github.com/odoo/odoo --depth 1 --branch 19.0
 
 # 2. Get these modules
-git clone https://github.com/ammarIbrahim59/odoo19-internship.git
+git clone https://github.com/ammarIbrahim59/Odoo19-Internship.git
 
 # 3. Set up a virtualenv
 python3 -m venv venv
 ./venv/bin/pip install -r odoo/requirements.txt
-./venv/bin/pip install -r odoo19-internship/requirements.txt
+./venv/bin/pip install -r Odoo19-Internship/requirements.txt
 
 # 4. Run, with this repo on the addons path
 ./venv/bin/python odoo/odoo-bin \
-    --addons-path=odoo/addons,odoo19-internship \
+    --addons-path=odoo/addons,Odoo19-Internship \
     -d library_db \
     -i library_management,custom_partner_extension
 ```
@@ -142,7 +142,7 @@ The module also inherits `base.view_res_partner_filter` to add a **VIP** filter 
 ## Repository layout
 
 ```
-odoo19-internship/
+Odoo19-Internship/
 ├── library_management/
 │   ├── __manifest__.py
 │   ├── models/          # book, tag, copy, loan, reservation
