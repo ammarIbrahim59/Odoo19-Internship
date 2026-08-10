@@ -27,10 +27,13 @@ A library catalog built around per-copy lending:
         'data/mail_template_data.xml',
         'data/library_book_reservation_cron.xml',
         'data/library_book_loan_cron.xml',
+        # Order matters. library_book_copy/loan_views define the actions that
+        # library_book_views' menu items point at, and library_book_views
+        # defines `menu_library_root`, which the reservation menu parents onto.
         'views/library_book_copy_views.xml',
         'views/library_book_loan_views.xml',
-        'views/library_book_reservation_views.xml',
         'views/library_book_views.xml',
+        'views/library_book_reservation_views.xml',
     ],
     'installable': True,
     'application': True,

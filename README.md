@@ -162,7 +162,8 @@ Odoo19-Internship/
 │   ├── models/          # book, tag, copy, loan, reservation
 │   ├── views/           # list/form/search views + menus
 │   ├── security/        # ir.model.access.csv
-│   └── data/            # mail template + 2 ir.cron records
+│   ├── data/            # mail template + 2 ir.cron records
+│   └── tests/           # copy-numbering regression tests
 ├── custom_partner_extension/
 │   ├── __manifest__.py
 │   ├── models/          # res_partner.py
@@ -177,13 +178,38 @@ Odoo itself is intentionally **not** vendored here. It's a versioned dependency 
 
 ---
 
+## Tests
+
+```bash
+./venv/bin/python odoo/odoo-bin \
+    --addons-path=odoo/addons,Odoo19-Internship \
+    -d test_db -u library_management \
+    --test-enable --test-tags /library_management --stop-after-init
+```
+
+`library_management/tests/` covers copy numbering, which is where the
+`UNIQUE(book_id, copy_number)` constraint makes off-by-one mistakes fail loudly:
+sequential and batch creation, per-book independence, archived numbers not being
+reused, caller-supplied numbers being respected, and reservation auto-assignment
+firing when an available copy appears.
+
+One of those tests is deliberately written against `default_get()` rather than
+calling `create()` directly. A plain `create({'book_id': ...})` cannot catch a
+stray `default=` on `copy_number`, because ORM defaults are applied *inside*
+`super().create()` — after the override has already inspected `vals`. The web
+client, by contrast, fetches defaults and posts them back as real values, so
+only a test that mimics that round-trip reproduces the collision.
+
+---
+
 ## Known limitations
 
 Honest list of what isn't built, rather than pretending it's finished:
 
 - No reporting views for loan history or reservation throughput.
 - No concurrency guard if two staff members click **Confirm Pickup** on the same reservation simultaneously. Fine for a portfolio project; not safe for a genuinely concurrent deployment.
-- No automated test suite yet — the modules were verified manually through the UI.
+- Test coverage is limited to `library.book.copy` numbering and reservation assignment. The loan lifecycle, the reminder cron and `custom_partner_extension` are still verified manually through the UI.
+- The screenshots above use placeholder author/borrower records from a development database.
 
 ## License
 
