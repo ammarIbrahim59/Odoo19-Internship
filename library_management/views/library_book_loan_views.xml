@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Loan Tree / List View 📋 -->
+    <record id="view_library_book_loan_tree" model="ir.ui.view">
+        <field name="name">library.book.loan.tree</field>
+        <field name="model">library.book.loan</field>
+        <field name="arch" type="xml">
+            <list string="Loans" decoration-danger="is_overdue">
+                <field name="book_id"/>
+                <field name="copy_id"/>
+                <field name="borrower_id"/>
+                <field name="borrow_date"/>
+                <field name="due_date"/>
+                <field name="return_date"/>
+                <field name="state"/>
+                <field name="is_overdue"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Loan Form View 📝 -->
+    <record id="view_library_book_loan_form" model="ir.ui.view">
+        <field name="name">library.book.loan.form</field>
+        <field name="model">library.book.loan</field>
+        <field name="arch" type="xml">
+            <form string="Loan">
+                <header>
+                    <button name="action_mark_returned" type="object" string="Mark Returned"
+                            class="oe_highlight" invisible="state != 'ongoing'"/>
+                    <button name="action_mark_lost" type="object" string="Mark Lost"
+                            invisible="state != 'ongoing'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="ongoing,returned"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="copy_id"/>
+                            <field name="book_id"/>
+                            <field name="borrower_id"/>
+                        </group>
+                        <group>
+                            <field name="borrow_date"/>
+                            <field name="due_date"/>
+                            <field name="return_date"/>
+                            <field name="is_overdue"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Loan Search View 🔍 -->
+    <record id="view_library_book_loan_search" model="ir.ui.view">
+        <field name="name">library.book.loan.search</field>
+        <field name="model">library.book.loan</field>
+        <field name="arch" type="xml">
+            <search string="Search Loans">
+                <field name="book_id"/>
+                <field name="borrower_id"/>
+                <filter string="Ongoing" name="ongoing" domain="[('state', '=', 'ongoing')]"/>
+                <filter string="Returned" name="returned" domain="[('state', '=', 'returned')]"/>
+                <filter string="Overdue" name="overdue" domain="[('is_overdue', '=', True)]"/>
+                <group>
+                    <filter string="Borrower" name="group_borrower" context="{'group_by': 'borrower_id'}"/>
+                    <filter string="Book" name="group_book" context="{'group_by': 'book_id'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Loan Window Action 🎯 -->
+    <record id="action_library_book_loan" model="ir.actions.act_window">
+        <field name="name">Loans</field>
+        <field name="res_model">library.book.loan</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_library_book_loan_search"/>
+        <field name="context">{'search_default_ongoing': 1}</field>
+    </record>
+
+</odoo>

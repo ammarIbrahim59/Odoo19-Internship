@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Tree / List View 📋 -->
+    <record id="view_library_book_tree" model="ir.ui.view">
+        <field name="name">library.book.tree</field>
+        <field name="model">library.book</field>
+        <field name="arch" type="xml">
+            <list string="Books">
+                <field name="name"/>
+                <field name="author_id"/>
+                <field name="tag_ids" widget="many2many_tags"/>
+                <field name="pages"/>
+                <field name="publication_date"/>
+                <field name="availability"/>
+                <field name="is_classic"/>
+                <field name="copy_count"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View 📝 -->
+    <record id="view_library_book_form" model="ir.ui.view">
+        <field name="name">library.book.form</field>
+        <field name="model">library.book</field>
+        <field name="arch" type="xml">
+            <form string="Book">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_copies" type="object" class="oe_stat_button" icon="fa-copy">
+                            <field name="copy_count" widget="statinfo" string="Copies"/>
+                        </button>
+                        <button name="action_view_loans" type="object" class="oe_stat_button" icon="fa-book">
+                            <field name="loan_count" widget="statinfo" string="Loans"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="author_id"/>
+                            <field name="tag_ids" widget="many2many_tags"/>
+                            <field name="publication_date"/>
+                            <field name="pages"/>
+                        </group>
+                        <group>
+                            <field name="availability"/>
+                            <field name="is_classic"/>
+                            <field name="copy_count"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Copies" name="copies">
+                            <field name="copy_ids">
+                                <list editable="bottom">
+                                    <field name="copy_number"/>
+                                    <field name="status"/>
+                                    <field name="active"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View 🔍 -->
+    <record id="view_library_book_search" model="ir.ui.view">
+        <field name="name">library.book.search</field>
+        <field name="model">library.book</field>
+        <field name="arch" type="xml">
+            <search string="Search Books">
+                <!-- Searchable Text Fields -->
+                <field name="name"/>
+                <field name="author_id"/>
+
+                <separator/>
+
+                <!-- Custom Filters -->
+                <filter string="Classics Only" name="classics" domain="[('is_classic', '=', True)]"/>
+                <filter string="Available Books" name="available" domain="[('availability', '=', 'available')]"/>
+
+                <!-- Group By Options -->
+                <group>
+                    <filter string="Availability" name="group_availability" context="{'group_by': 'availability'}"/>
+                    <filter string="Author" name="group_author" context="{'group_by': 'author_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Window Action 🎯 -->
+    <record id="action_library_book" model="ir.actions.act_window">
+        <field name="name">Books</field>
+        <field name="res_model">library.book</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_library_book_search"/>
+    </record>
+
+    <!-- Tag Tree / List View 📋 -->
+    <record id="view_library_book_tag_tree" model="ir.ui.view">
+        <field name="name">library.book.tag.tree</field>
+        <field name="model">library.book.tag</field>
+        <field name="arch" type="xml">
+            <list string="Tags">
+                <field name="name"/>
+                <field name="color" widget="color_picker"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Tag Form View 📝 -->
+    <record id="view_library_book_tag_form" model="ir.ui.view">
+        <field name="name">library.book.tag.form</field>
+        <field name="model">library.book.tag</field>
+        <field name="arch" type="xml">
+            <form string="Tag">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="color" widget="color_picker"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tag Window Action 🎯 -->
+    <record id="action_library_book_tag" model="ir.actions.act_window">
+        <field name="name">Tags</field>
+        <field name="res_model">library.book.tag</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menu Items 📌 -->
+    <menuitem id="menu_library_root" name="Library" sequence="10"/>
+    <menuitem id="menu_library_books" name="Books" parent="menu_library_root" action="action_library_book" sequence="10"/>
+    <menuitem id="menu_library_loans" name="Loans" parent="menu_library_root" action="action_library_book_loan" sequence="15"/>
+    <menuitem id="menu_library_tags" name="Tags" parent="menu_library_root" action="action_library_book_tag" sequence="20"/>
+    <menuitem id="menu_library_copies" name="Copies" parent="menu_library_root" action="action_library_book_copy" sequence="25"/>
+
+</odoo>

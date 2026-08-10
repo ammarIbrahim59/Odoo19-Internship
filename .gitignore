@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Odoo
+*.log
+odoo.conf
+filestore/
+sessions/
+
+# Editors / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store

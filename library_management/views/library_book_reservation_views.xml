@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Reservation List View -->
+    <record id="view_library_book_reservation_list" model="ir.ui.view">
+        <field name="name">library.book.reservation.list</field>
+        <field name="model">library.book.reservation</field>
+        <field name="arch" type="xml">
+            <list string="Reservations">
+                <field name="book_id"/>
+                <field name="partner_id"/>
+                <field name="request_date"/>
+                <field name="hold_expiry"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Reservation Form View -->
+    <record id="view_library_book_reservation_form" model="ir.ui.view">
+        <field name="name">library.book.reservation.form</field>
+        <field name="model">library.book.reservation</field>
+        <field name="arch" type="xml">
+            <form string="Reservation">
+                <header>
+                        <button name="action_fulfill" type="object" string="Confirm Pickup"
+                                class="oe_highlight" invisible="state != 'ready'"/>
+                        <field name="state" widget="statusbar"
+                            statusbar_visible="requested,ready,fulfilled,expired"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="book_id"/>
+                            <field name="partner_id"/>
+                            <field name="copy_id"/>
+                        </group>
+                        <group>
+                            <field name="request_date"/>
+                            <field name="ready_date"/>
+                            <field name="hold_expiry"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Reservation Search View -->
+    <record id="view_library_book_reservation_search" model="ir.ui.view">
+        <field name="name">library.book.reservation.search</field>
+        <field name="model">library.book.reservation</field>
+        <field name="arch" type="xml">
+            <search string="Search Reservations">
+                <field name="book_id"/>
+                <field name="partner_id"/>
+                <filter string="Requested" name="requested"
+                        domain="[('state', '=', 'requested')]"/>
+                <filter string="Ready for Pickup" name="ready"
+                        domain="[('state', '=', 'ready')]"/>
+                <group>
+                    <filter string="Book" name="group_book"
+                            context="{'group_by': 'book_id'}"/>
+                    <filter string="Status" name="group_state"
+                            context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Reservation Window Action -->
+    <record id="action_library_book_reservation" model="ir.actions.act_window">
+        <field name="name">Reservations</field>
+        <field name="res_model">library.book.reservation</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_library_book_reservation_search"/>
+        <field name="context">{'search_default_requested': 1}</field>
+    </record>
+
+    <!-- Reservation Menu -->
+    <menuitem id="menu_library_reservations" name="Reservations"
+              parent="menu_library_root" action="action_library_book_reservation" sequence="12"/>
+
+</odoo>

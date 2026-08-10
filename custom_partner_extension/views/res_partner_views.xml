@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_form_inherit_custom" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.custom</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            
+            <xpath expr="//field[@name='category_id']" position="after">
+                <field name="is_vip"/>
+            </xpath>
+
+            <xpath expr="//field[@name='function']" position="after">
+                <field name="instructor_bio" placeholder="Enter instructor biography..." invisible="is_company"/>
+                <field name="bio_character_count" invisible="is_company"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="view_res_partner_filter_inherit_custom" model="ir.ui.view">
+        <field name="name">res.partner.select.inherit.custom</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+
+            <filter name="inactive" position="after">
+                <filter string="VIP" name="is_vip" domain="[('is_vip', '=', True)]"/>
+            </filter>
+
+            <filter name="salesperson" position="after">
+                <filter string="VIP" name="group_by_is_vip" context="{'group_by': 'is_vip'}"/>
+            </filter>
+
+        </field>
+    </record>
+
+</odoo>

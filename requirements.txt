@@ -1,0 +1,8 @@
+# These modules add no third-party dependencies beyond Odoo 19's own
+# requirements.txt — they import only `pytz`, which Odoo already requires.
+#
+# One optional substitution for local setup: on Python 3.13, Odoo pins
+# psycopg2==2.9.10, which needs local build tooling. Install the wheel
+# instead if that fails:
+#
+#   psycopg2-binary==2.9.10 ; python_version >= '3.13'
